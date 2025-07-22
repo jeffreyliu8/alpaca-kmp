@@ -1,9 +1,11 @@
 package org.jeffreyliu.alpacakmp
 
+import  com.jeffreyliu.alpaca.platform
+
 class Greeting {
-    private val platform = getPlatform()
+    private val platform = platform()
 
     fun greet(): String {
-        return "Hello, ${platform.name}!"
+        return "Hello, ${platform}!"
     }
 }
