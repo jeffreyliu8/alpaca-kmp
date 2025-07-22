@@ -14,8 +14,6 @@ import kotlin.time.ExperimentalTime
 
 interface AlpacaClient {
 
-    fun setCredentials(apiKey: String, apiSecret: String)
-
     /**
      * Get the Alpaca account information
      * @return AlpacaAccount

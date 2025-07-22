@@ -87,12 +87,14 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 // Add KMP dependencies here
 
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.client.logging)
+                api(libs.ktor.client.core)
+                api(libs.ktor.client.content.negotiation)
+                api(libs.ktor.client.logging)
                 implementation(libs.ktor.client.websockets)
-                implementation(libs.ktor.serialization.kotlinx.json)
+                api(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.kotlinx.serialization.json)
+
+                api(libs.kermit)
             }
         }
 
