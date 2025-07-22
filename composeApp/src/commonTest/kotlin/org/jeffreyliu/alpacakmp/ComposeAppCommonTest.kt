@@ -9,6 +9,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -50,6 +51,9 @@ class ComposeAppCommonTest {
 
         val account = client.getAccount()
         assertEquals("658b447a-cde7-4df6-957b-e79cb14e90ab", account?.id)
+
+        val asdf = client.streamAccount().first()
+        println(asdf)
 
     }
 }

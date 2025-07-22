@@ -96,6 +96,8 @@ interface AlpacaClient {
      */
     fun monitorStockPrice(symbols: Set<String>): Flow<List<AlpacaResponseInterface>>
 
+    fun streamAccount(): Flow<List<AlpacaResponseInterface>>
+
     suspend fun getTrades(
         symbol: String,
         start: String?, //Filter data equal to or after this time in RFC-3339 format. Fractions of a second are not accepted. Defaults to the current day in CT.

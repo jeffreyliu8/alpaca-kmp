@@ -17,6 +17,7 @@ import com.jeffreyliu.alpaca.model.AlpacaTrades
 import com.jeffreyliu.alpaca.model.BarSchema
 import com.jeffreyliu.alpaca.model.QuoteSchema
 import com.jeffreyliu.alpaca.model.TradeSchema
+import com.jeffreyliu.alpaca.model.TradeUpdateSchema
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.websocket.*
@@ -47,10 +48,14 @@ class AlpacaClientImpl(
         const val PAPER_API_URL = "https://paper-api.alpaca.markets"
         const val LIVE_API_URL = "https://api.alpaca.markets"
 
+        const val PAPER_STREAM_URL = "paper-api.alpaca.markets"
+        const val LIVE_STREAM_URL = "api.alpaca.markets"
+
         const val API_DATA_URL = "https://data.alpaca.markets"
     }
 
     private val apiDomain = if (isPaper) PAPER_API_URL else LIVE_API_URL
+    private val streamDomain = if (isPaper) PAPER_STREAM_URL else LIVE_STREAM_URL
     private val apiDataDomain = API_DATA_URL
 
     private fun HttpRequestBuilder.withAlpacaHeaders() {
@@ -313,6 +318,12 @@ class AlpacaClientImpl(
                                                 emit(apiResponse)
                                                 return@forEach
                                             }
+
+                                            is TradeUpdateSchema -> {
+//                                            logger.d("TradeUpdateSchema response: $response")
+                                                emit(apiResponse)
+                                                return@forEach
+                                            }
                                         }
                                     }
                                 } catch (e: Exception) {
@@ -329,6 +340,63 @@ class AlpacaClientImpl(
                 throw e
             }
         }
+
+    override fun streamAccount(): Flow<List<AlpacaResponseInterface>> = flow {
+        try {
+            httpClient.webSocket(
+                method = HttpMethod.Get,
+                host = streamDomain,
+                path = "/stream",
+                request = {
+                    url {
+                        protocol = URLProtocol.WSS
+                    }
+                }
+            ) {
+                // Authenticate
+                val authMessage = Json.encodeToString(
+                    AlpacaSubscriptionMessage.serializer(),
+                    AlpacaSubscriptionMessage(action = "auth", key = apiKey, secret = apiSecret)
+                )
+                send(Frame.Text(authMessage))
+
+                // Subscribe to account updates
+                val subscriptionMessage = Json.encodeToString(
+                    AlpacaSubscriptionMessage.serializer(),
+                    AlpacaSubscriptionMessage(
+                        action = "listen",
+                        data = AlpacaSubscriptionMessage.Data(streams = listOf("trade_updates"))
+                    )
+                )
+                send(Frame.Text(subscriptionMessage))
+
+                for (frame in incoming) {
+                    when (frame) {
+                        is Frame.Text -> {
+                            val text = frame.readText()
+                            try {
+                                val apiResponse =
+                                    Json.decodeFromString<List<AlpacaResponseInterface>>(text)
+                                emit(apiResponse)
+                            } catch (e: Exception) {
+                                logger.e("Error parsing account update: ${e.message}")
+                            }
+                        }
+
+                        is Frame.Binary -> {
+                            val response = frame.readBytes().decodeToString()
+                            logger.d("WebSocket connection binary frame received: $response")
+                        }
+
+                        else -> logger.e("Received non-text frame: $frame")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.e("Error in WebSocket connection: ${e.message}")
+            throw e
+        }
+    }
 
     override suspend fun getTrades(
         symbol: String,

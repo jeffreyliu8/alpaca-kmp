@@ -41,10 +41,18 @@ data class AlpacaSubscriptionRequest(
 @Serializable
 data class AlpacaSubscriptionMessage(
     val action: String,
-    val trades: List<String>,
-    val quotes: List<String>,
-    val bars: List<String>
-)
+    val trades: List<String>? = null,
+    val quotes: List<String>? = null,
+    val bars: List<String>? = null,
+    val key: String? = null,
+    val secret: String? = null,
+    val data: Data? = null,
+) {
+    @Serializable
+    data class Data(
+        val streams: List<String>
+    )
+}
 
 
 @Serializable
@@ -146,6 +154,13 @@ data class BarSchema(
     @SerialName("vw") val vw: Double? = null,
 ) : AlpacaResponseInterface
 
+@Serializable
+data class TradeUpdateSchema(
+    @SerialName("T") val type: String,
+    val event: String? = null,
+    val order: AlpacaOrder? = null,
+) : AlpacaResponseInterface
+
 
 object ItemSerializer : JsonContentPolymorphicSerializer<AlpacaResponseInterface>(AlpacaResponseInterface::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<AlpacaResponseInterface> {
@@ -157,6 +172,7 @@ object ItemSerializer : JsonContentPolymorphicSerializer<AlpacaResponseInterface
                 else if (element.containsKey("T") && (element["T"] as JsonPrimitive).content == "t") TradeSchema.serializer()
                 else if (element.containsKey("T") && (element["T"] as JsonPrimitive).content == "q") QuoteSchema.serializer()
                 else if (element.containsKey("T") && (element["T"] as JsonPrimitive).content == "b") BarSchema.serializer()
+                else if (element.containsKey("T") && (element["T"] as JsonPrimitive).content == "trade_updates") TradeUpdateSchema.serializer()
                 else throw IllegalArgumentException("Unknown object type: $element")
             }
 
