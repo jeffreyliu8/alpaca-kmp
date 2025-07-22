@@ -36,20 +36,27 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class AlpacaClientImpl(
+    isPaper: Boolean = true,
     private val apiKey: String,
     private val apiSecret: String,
     private val httpClient: HttpClient,
     private val logger: LoggerRepository,
-    private val apiDomain: String,
-    private val apiDataDomain: String,
 ) : AlpacaClient {
 
+    companion object {
+        const val PAPER_API_URL = "https://paper-api.alpaca.markets"
+        const val LIVE_API_URL = "https://api.alpaca.markets"
+
+        const val API_DATA_URL = "https://data.alpaca.markets"
+    }
+
+    private val apiDomain = if (isPaper) PAPER_API_URL else LIVE_API_URL
+    private val apiDataDomain = API_DATA_URL
 
     private fun HttpRequestBuilder.withAlpacaHeaders() {
         headers {
             append("APCA-API-KEY-ID", apiKey)
             append("APCA-API-SECRET-KEY", apiSecret)
-//            append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         }
         contentType(ContentType.Application.Json)
     }

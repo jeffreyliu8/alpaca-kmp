@@ -16,9 +16,6 @@ import kotlin.test.assertEquals
 
 class ComposeAppCommonTest {
 
-    val apiDomain = "https://paper-api.alpaca.markets"
-    val apiDataDomain = "https://data.alpaca.markets"
-
     @Test
     fun example() = runTest {
         val httpClient = HttpClient {
@@ -44,10 +41,9 @@ class ComposeAppCommonTest {
         val logger = LoggerRepositoryImpl()
 
         val client: AlpacaClient = AlpacaClientImpl(
+            isPaper = true,
             apiKey = apiKey,
             apiSecret = apiSecret,
-            apiDomain = apiDomain,
-            apiDataDomain = apiDataDomain,
             httpClient = httpClient,
             logger = logger,
         )
