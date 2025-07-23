@@ -243,104 +243,103 @@ class AlpacaClientImpl(
     }
 
     @OptIn(ExperimentalTime::class)
-    override fun monitorStockPrice(symbols: Set<String>): Flow<List<AlpacaResponseInterface>> =
-        flow {
-            try {
-                httpClient.webSocket(
-                    method = HttpMethod.Get,
-                    host = "stream.data.alpaca.markets",
-                    path = "/v2/iex",
-                    request = {
-                        url {
-                            protocol = URLProtocol.WSS
-                        }
-                        withAlpacaHeaders()
+    override fun monitorStockPrice(
+        symbols: Set<String>,
+        overrideWithTestMode: Boolean
+    ): Flow<List<AlpacaResponseInterface>> = flow {
+        try {
+            httpClient.webSocket(
+                method = HttpMethod.Get,
+                host = "stream.data.alpaca.markets",
+                path = if (overrideWithTestMode) "/v2/test" else "/v2/iex",
+                request = {
+                    url {
+                        protocol = URLProtocol.WSS
                     }
-                ) {
+                    withAlpacaHeaders()
+                }
+            ) {
 
-                    val subscriptionRequest = AlpacaSubscriptionMessage(
-                        action = "subscribe",
-                        trades = symbols.toList(),
-                        quotes = symbols.toList(),
-                        bars = symbols.toList()
-                    )
+                val subscriptionRequest = AlpacaSubscriptionMessage(
+                    action = "subscribe",
+                    trades = symbols.toList(),
+                    quotes = symbols.toList(),
+                    bars = symbols.toList()
+                )
 
-                    val myText = Json.encodeToString(
-                        AlpacaSubscriptionMessage.serializer(),
-                        subscriptionRequest
-                    )
-                    send(Frame.Text(myText))
+                val myText = Json.encodeToString(
+                    AlpacaSubscriptionMessage.serializer(),
+                    subscriptionRequest
+                )
+                send(Frame.Text(myText))
 
-                    // Receive messages
-                    for (frame in incoming) {
-                        when (frame) {
-                            is Frame.Text -> {
-                                val text = frame.readText()
+                // Receive messages
+                for (frame in incoming) {
+                    when (frame) {
+                        is Frame.Text -> {
+                            val text = frame.readText()
 //                            logger.d("Received WebSocket frame: $text")
-                                try {
-                                    // Parse the message
-                                    val apiResponse =
-                                        Json.decodeFromString<List<AlpacaResponseInterface>>(text)
 
-                                    apiResponse.forEach { response ->
-                                        when (response) {
-                                            is AlpacaErrorCodeMessageResponse -> {
+                            // Parse the message
+                            val apiResponse =
+                                Json.decodeFromString<List<AlpacaResponseInterface>>(text)
+
+                            apiResponse.forEach { response ->
+                                when (response) {
+                                    is AlpacaErrorCodeMessageResponse -> {
 //                                            logger.e("Error response: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is AlpacaSuccessMessageResponse -> {
-//                                            logger.d("success response: ${response.msg}")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is AlpacaSubscriptionRequest -> {
-//                                            logger.d("Subscription request: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is TradeSchema -> {
-//                                            logger.d("TradeSchema response: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is QuoteSchema -> {
-//                                            logger.d("QuoteSchema response: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is BarSchema -> {
-//                                            logger.d("BarSchema response: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-
-                                            is TradeUpdateSchema -> {
-//                                            logger.d("TradeUpdateSchema response: $response")
-                                                emit(apiResponse)
-                                                return@forEach
-                                            }
-                                        }
+                                        emit(apiResponse)
+                                        return@forEach
                                     }
-                                } catch (e: Exception) {
-                                    logger.e("Error parsing stock price update: ${e.message}")
+
+                                    is AlpacaSuccessMessageResponse -> {
+//                                            logger.d("success response: ${response.msg}")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
+
+                                    is AlpacaSubscriptionRequest -> {
+//                                            logger.d("Subscription request: $response")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
+
+                                    is TradeSchema -> {
+//                                            logger.d("TradeSchema response: $response")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
+
+                                    is QuoteSchema -> {
+//                                            logger.d("QuoteSchema response: $response")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
+
+                                    is BarSchema -> {
+//                                            logger.d("BarSchema response: $response")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
+
+                                    is TradeUpdateSchema -> {
+//                                            logger.d("TradeUpdateSchema response: $response")
+                                        emit(apiResponse)
+                                        return@forEach
+                                    }
                                 }
                             }
-
-                            else -> logger.e("Received non-text frame: $frame")
                         }
+
+                        else -> logger.e("Received non-text frame: $frame")
                     }
                 }
-            } catch (e: Exception) {
-                logger.e("Error in WebSocket connection: ${e.message}")
-                throw e
             }
+        } catch (e: Exception) {
+            logger.e("Error in WebSocket connection: ${e.message}")
+            throw e
         }
+    }
 
     override fun streamAccount(): Flow<StreamingRequestResponse> = flow {
         try {

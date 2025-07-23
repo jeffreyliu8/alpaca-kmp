@@ -9,8 +9,8 @@ import kotlin.time.Instant
 data class AlpacaAccount(
     val id: String,
     @SerialName("account_number") val accountNumber: String,
-    val status: String,
-    @SerialName("crypto_status") val cryptoStatus: String,
+    val status: AccountStatus,
+    @SerialName("crypto_status") val cryptoStatus: AccountStatus,
     @SerialName("options_approved_level") val optionsApprovedLevel: Int,
     @SerialName("options_trading_level") val optionsTradingLevel: Int,
     @SerialName("currency") val currency: String,

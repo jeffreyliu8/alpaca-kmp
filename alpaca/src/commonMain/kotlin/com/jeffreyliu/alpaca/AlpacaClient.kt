@@ -97,7 +97,10 @@ interface AlpacaClient {
      * @param symbols The stock symbol to monitor (e.g., "AAPL")
      * @return Flow of AlpacaStockPriceUpdate containing real-time stock price updates
      */
-    fun monitorStockPrice(symbols: Set<String>): Flow<List<AlpacaResponseInterface>>
+    fun monitorStockPrice(
+        symbols: Set<String>,
+        overrideWithTestMode: Boolean = false
+    ): Flow<List<AlpacaResponseInterface>>
 
 
     suspend fun getTrades(
