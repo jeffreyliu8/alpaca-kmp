@@ -10,9 +10,12 @@ import com.jeffreyliu.alpaca.model.AlpacaPosition
 import com.jeffreyliu.alpaca.model.AlpacaReplaceOrderRequest
 import com.jeffreyliu.alpaca.model.AlpacaResponseInterface
 import com.jeffreyliu.alpaca.model.AlpacaTrades
+import com.jeffreyliu.alpaca.model.stream.StreamingRequestResponse
 import kotlin.time.ExperimentalTime
 
 interface AlpacaClient {
+
+    fun streamAccount(): Flow<StreamingRequestResponse>
 
     /**
      * Get the Alpaca account information
@@ -20,7 +23,7 @@ interface AlpacaClient {
      */
     suspend fun getAccount(): AlpacaAccount?
 
-    suspend fun getPositions(): List<AlpacaPosition>
+    suspend fun getPositions(): List<AlpacaPosition>?
 
     suspend fun getPosition(symbol: String): AlpacaPosition?
 
@@ -96,7 +99,6 @@ interface AlpacaClient {
      */
     fun monitorStockPrice(symbols: Set<String>): Flow<List<AlpacaResponseInterface>>
 
-    fun streamAccount(): Flow<List<AlpacaResponseInterface>>
 
     suspend fun getTrades(
         symbol: String,

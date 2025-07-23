@@ -18,6 +18,7 @@ import com.jeffreyliu.alpaca.model.BarSchema
 import com.jeffreyliu.alpaca.model.QuoteSchema
 import com.jeffreyliu.alpaca.model.TradeSchema
 import com.jeffreyliu.alpaca.model.TradeUpdateSchema
+import com.jeffreyliu.alpaca.model.stream.StreamingRequestResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.websocket.*
@@ -76,14 +77,14 @@ class AlpacaClientImpl(
         return null
     }
 
-    override suspend fun getPositions(): List<AlpacaPosition> {
+    override suspend fun getPositions(): List<AlpacaPosition>? {
         val rsp = httpClient.get("$apiDomain/v2/positions") {
             withAlpacaHeaders()
         }
         if (rsp.status == HttpStatusCode.OK) {
             return rsp.body<List<AlpacaPosition>>()
         }
-        return emptyList()
+        return null
     }
 
     override suspend fun getPosition(symbol: String): AlpacaPosition? {
@@ -341,7 +342,7 @@ class AlpacaClientImpl(
             }
         }
 
-    override fun streamAccount(): Flow<List<AlpacaResponseInterface>> = flow {
+    override fun streamAccount(): Flow<StreamingRequestResponse> = flow {
         try {
             httpClient.webSocket(
                 method = HttpMethod.Get,
@@ -372,20 +373,19 @@ class AlpacaClientImpl(
 
                 for (frame in incoming) {
                     when (frame) {
-                        is Frame.Text -> {
-                            val text = frame.readText()
-                            try {
-                                val apiResponse =
-                                    Json.decodeFromString<List<AlpacaResponseInterface>>(text)
-                                emit(apiResponse)
-                            } catch (e: Exception) {
-                                logger.e("Error parsing account update: ${e.message}")
-                            }
-                        }
+//                        is Frame.Text -> {
+//                            val text = frame.readText()
+//                            val apiResponse =
+//                                Json.decodeFromString<List<AlpacaResponseInterface>>(text)
+//                            emit(apiResponse)
+//                        }
 
                         is Frame.Binary -> {
                             val response = frame.readBytes().decodeToString()
-                            logger.d("WebSocket connection binary frame received: $response")
+                            logger.d("frame: $response")
+                            val apiResponse =
+                                Json.decodeFromString<StreamingRequestResponse>(response)
+                            emit(apiResponse)
                         }
 
                         else -> logger.e("Received non-text frame: $frame")

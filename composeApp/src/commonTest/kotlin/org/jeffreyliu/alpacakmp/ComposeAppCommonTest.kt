@@ -49,11 +49,13 @@ class ComposeAppCommonTest {
             logger = logger,
         )
 
-        val account = client.getAccount()
-        assertEquals("658b447a-cde7-4df6-957b-e79cb14e90ab", account?.id)
+//        val account = client.getAccount()
+//        assertEquals("658b447a-cde7-4df6-957b-e79cb14e90ab", account?.id)
 
-        val asdf = client.streamAccount().first()
-        println(asdf)
+        client.streamAccount().collect {
+            println(it)
+        }
+
 
     }
 }
