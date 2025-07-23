@@ -9,6 +9,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -54,9 +55,19 @@ class ComposeAppCommonTest {
 //        client.streamAccount().collect {
 //            println(it)
 //        }
+//
+//        client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true).collect {
+//            println(it)
+//        }
 
-        client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true).collect {
-            println(it)
+
+        combine(
+            client.streamAccount(),
+            client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true)
+        ) { a, b ->
+            println("$a")
+        }.collect {
+
         }
     }
 }
