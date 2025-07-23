@@ -59,7 +59,7 @@ data class AlpacaOrder(
     @SerialName("replaced_at") val replacedAt: String? = null,
     @SerialName("replaced_by") val replacedBy: String? = null,
     @SerialName("replaces") val replaces: String? = null,
-    val asset_id: String,
+    @SerialName("asset_id") val assetId: String,
     val symbol: String,
     @SerialName("asset_class") val assetClass: String,
     val notional: String? = null,
@@ -83,4 +83,5 @@ data class AlpacaOrder(
     val subtag: String? = null,
     val source: String? = null,
     @SerialName("expires_at") val expiresAt: String? = null,
+    @SerialName("cancel_requested_at") val cancelRequestedAt: String? = null,
 )

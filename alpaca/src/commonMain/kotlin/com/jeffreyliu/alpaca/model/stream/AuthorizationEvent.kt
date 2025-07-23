@@ -1,5 +1,7 @@
 package com.jeffreyliu.alpaca.model.stream
 
+import com.jeffreyliu.alpaca.model.AlpacaOrder
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,4 +24,10 @@ data class StreamData(
     val streams: List<String>? = null,
     val status: String? = null,
     val action: String? = null,
+    val at: String? = null,
+    @SerialName("event_id")
+    val eventId: String? = null,
+    val event: String? = null,
+    val timestamp: String? = null,
+    val order: AlpacaOrder? = null,
 )
