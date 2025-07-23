@@ -30,4 +30,8 @@ data class StreamData(
     val event: String? = null,
     val timestamp: String? = null,
     val order: AlpacaOrder? = null,
+    @SerialName("execution_id") val executionId: String? = null,
+    val price: String? = null,
+    val qty: String? = null,
+    @SerialName("position_qty") val positionQty: String? = null,
 )

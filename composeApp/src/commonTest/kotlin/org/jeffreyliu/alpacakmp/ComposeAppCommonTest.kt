@@ -60,14 +60,22 @@ class ComposeAppCommonTest {
 //            println(it)
 //        }
 
-
         combine(
             client.streamAccount(),
-            client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true)
+            client.monitorStockPrice(setOf("TSLA"), overrideWithTestMode = false)
         ) { a, b ->
             println("$a")
         }.collect {
 
         }
+
+//        combine(
+//            client.streamAccount(),
+//            client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true)
+//        ) { a, b ->
+//            println("$a")
+//        }.collect {
+//
+//        }
     }
 }
