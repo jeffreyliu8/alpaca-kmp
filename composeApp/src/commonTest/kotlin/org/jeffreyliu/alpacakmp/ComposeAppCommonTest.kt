@@ -3,6 +3,7 @@ package org.jeffreyliu.alpacakmp
 import com.jeffreyliu.alpaca.AlpacaClient
 import com.jeffreyliu.alpaca.AlpacaClientImpl
 import com.jeffreyliu.alpaca.logger.LoggerRepositoryImpl
+import com.jeffreyliu.alpaca.model.AlpacaStockExchangeOption
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -60,22 +61,25 @@ class ComposeAppCommonTest {
 //            println(it)
 //        }
 
-        combine(
-            client.streamAccount(),
-            client.monitorStockPrice(setOf("TSLA"), overrideWithTestMode = false)
-        ) { a, b ->
-            println("$a")
-        }.collect {
-
-        }
-
 //        combine(
 //            client.streamAccount(),
-//            client.monitorStockPrice(setOf("FAKEPACA"), overrideWithTestMode = true)
+//            client.monitorStockPrice(setOf("TSLA"), overrideWithTestMode = false)
 //        ) { a, b ->
 //            println("$a")
 //        }.collect {
 //
 //        }
+
+        combine(
+            client.streamAccount(),
+            client.monitorStockPrice(
+                setOf("FAKEPACA"),
+                stockExchange = AlpacaStockExchangeOption.TEST
+            )
+        ) { a, b ->
+            println("$b")
+        }.collect {
+
+        }
     }
 }

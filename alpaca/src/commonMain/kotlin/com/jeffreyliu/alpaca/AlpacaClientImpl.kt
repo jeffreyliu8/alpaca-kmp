@@ -10,6 +10,7 @@ import com.jeffreyliu.alpaca.model.AlpacaOrderRequest
 import com.jeffreyliu.alpaca.model.AlpacaPosition
 import com.jeffreyliu.alpaca.model.AlpacaReplaceOrderRequest
 import com.jeffreyliu.alpaca.model.AlpacaResponseInterface
+import com.jeffreyliu.alpaca.model.AlpacaStockExchangeOption
 import com.jeffreyliu.alpaca.model.AlpacaSubscriptionMessage
 import com.jeffreyliu.alpaca.model.AlpacaSubscriptionRequest
 import com.jeffreyliu.alpaca.model.AlpacaSuccessMessageResponse
@@ -245,13 +246,13 @@ class AlpacaClientImpl(
     @OptIn(ExperimentalTime::class)
     override fun monitorStockPrice(
         symbols: Set<String>,
-        overrideWithTestMode: Boolean
+        stockExchange: AlpacaStockExchangeOption,
     ): Flow<List<AlpacaResponseInterface>> = flow {
         try {
             httpClient.webSocket(
                 method = HttpMethod.Get,
                 host = "stream.data.alpaca.markets",
-                path = if (overrideWithTestMode) "/v2/test" else "/v2/iex",
+                path = "/v2/${stockExchange.name.lowercase()}",
                 request = {
                     url {
                         protocol = URLProtocol.WSS

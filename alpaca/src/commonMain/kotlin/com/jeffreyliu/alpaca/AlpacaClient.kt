@@ -9,6 +9,7 @@ import com.jeffreyliu.alpaca.model.AlpacaOrderRequest
 import com.jeffreyliu.alpaca.model.AlpacaPosition
 import com.jeffreyliu.alpaca.model.AlpacaReplaceOrderRequest
 import com.jeffreyliu.alpaca.model.AlpacaResponseInterface
+import com.jeffreyliu.alpaca.model.AlpacaStockExchangeOption
 import com.jeffreyliu.alpaca.model.AlpacaTrades
 import com.jeffreyliu.alpaca.model.stream.StreamingRequestResponse
 import kotlin.time.ExperimentalTime
@@ -99,7 +100,7 @@ interface AlpacaClient {
      */
     fun monitorStockPrice(
         symbols: Set<String>,
-        overrideWithTestMode: Boolean = false
+        stockExchange: AlpacaStockExchangeOption = AlpacaStockExchangeOption.IEX,
     ): Flow<List<AlpacaResponseInterface>>
 
 
