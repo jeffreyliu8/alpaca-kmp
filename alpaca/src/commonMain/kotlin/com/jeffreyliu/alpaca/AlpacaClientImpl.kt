@@ -2,7 +2,6 @@ package com.jeffreyliu.alpaca
 
 import com.jeffreyliu.alpaca.logger.LoggerRepository
 import com.jeffreyliu.alpaca.model.AlpacaAccount
-import com.jeffreyliu.alpaca.model.AlpacaAccountAndTime
 import com.jeffreyliu.alpaca.model.AlpacaErrorCodeMessageResponse
 import com.jeffreyliu.alpaca.model.AlpacaOrder
 import com.jeffreyliu.alpaca.model.AlpacaOrderIdStatus
@@ -26,16 +25,10 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
 import kotlin.collections.forEach
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class AlpacaClientImpl(
@@ -126,33 +119,6 @@ class AlpacaClientImpl(
         }
         return null
     }
-
-
-    @OptIn(ExperimentalTime::class)
-    override fun getAccountFlow(elapseTimeMilliseconds: Long): Flow<AlpacaAccountAndTime> = flow {
-        while (true) {
-            try {
-                coroutineScope {
-                    val account = async { getAccount() }
-                    val positions = async { getPositions() }
-                    val orders = async { getOrders() }
-                    emit(
-                        AlpacaAccountAndTime(
-                            time = Clock.System.now(),
-                            account.await(),
-                            positions.await(),
-                            orders.await(),
-                        )
-                    )
-                }
-
-                delay(elapseTimeMilliseconds) // Fetch every 5 seconds
-            } catch (e: Exception) {
-                logger.e("Error fetching Alpaca account: ${e.message}")
-                emit(AlpacaAccountAndTime(time = Clock.System.now(), null, null, null))
-            }
-        }
-    }.flowOn(Dispatchers.Default)
 
     override suspend fun placeOrder(orderRequest: AlpacaOrderRequest): AlpacaOrder? {
         val rsp = httpClient.post("$apiDomain/v2/orders") {

@@ -2,7 +2,6 @@ package com.jeffreyliu.alpaca
 
 import kotlinx.coroutines.flow.Flow
 import com.jeffreyliu.alpaca.model.AlpacaAccount
-import com.jeffreyliu.alpaca.model.AlpacaAccountAndTime
 import com.jeffreyliu.alpaca.model.AlpacaOrder
 import com.jeffreyliu.alpaca.model.AlpacaOrderIdStatus
 import com.jeffreyliu.alpaca.model.AlpacaOrderRequest
@@ -12,7 +11,6 @@ import com.jeffreyliu.alpaca.model.AlpacaResponseInterface
 import com.jeffreyliu.alpaca.model.AlpacaStockExchangeOption
 import com.jeffreyliu.alpaca.model.AlpacaTrades
 import com.jeffreyliu.alpaca.model.stream.StreamingRequestResponse
-import kotlin.time.ExperimentalTime
 
 interface AlpacaClient {
 
@@ -74,16 +72,6 @@ interface AlpacaClient {
         qty: String? = null,
         percentage: String? = null
     ): AlpacaOrder?
-
-    /**
-     * Get the account information, but as a Flow that emits the account info every
-     * [elapseTimeMilliseconds]
-     *
-     * @param elapseTimeMilliseconds the time between each poll of the account information
-     * @return a flow of the account information
-     */
-    @OptIn(ExperimentalTime::class)
-    fun getAccountFlow(elapseTimeMilliseconds: Long = 10_000L): Flow<AlpacaAccountAndTime>
 
     /**
      * Place an order with Alpaca

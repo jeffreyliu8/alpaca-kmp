@@ -2,8 +2,6 @@ package com.jeffreyliu.alpaca.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @Serializable
 data class AlpacaAccount(
@@ -48,11 +46,4 @@ data class AlpacaAccount(
     @SerialName("pending_reg_taf_fees") val pendingRegTafFees: String,
     @SerialName("admin_configurations") val adminConfigurations: Map<String, String> = emptyMap(),
     @SerialName("user_configurations") val userConfigurations: Map<String, String>? = null
-)
-
-data class AlpacaAccountAndTime @OptIn(ExperimentalTime::class) constructor(
-    val time: Instant,
-    val account: AlpacaAccount?,
-    val positions: List<AlpacaPosition>?,
-    val orders: List<AlpacaOrder>?,
 )
