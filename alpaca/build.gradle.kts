@@ -133,7 +133,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "library", version.toString())
+    coordinates(group.toString(), "alpacakmp", version.toString())
 
     pom {
         name = "Alpaca Kmp"
@@ -142,22 +142,22 @@ mavenPublishing {
         url = "https://github.com/jeffreyliu8/alpaca-kmp/"
         licenses {
             license {
-                name = "XXX"
-                url = "YYY"
-                distribution = "ZZZ"
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             }
         }
         developers {
             developer {
-                id = "XXX"
-                name = "YYY"
-                url = "ZZZ"
+                id = "jeffreyliu8"
+                name = "Jeffrey Liu"
+                url = "https://github.com/jeffreyliu8/"
             }
         }
         scm {
-            url = "XXX"
-            connection = "YYY"
-            developerConnection = "ZZZ"
+            url = "https://github.com/jeffreyliu8/alpaca-kmp/"
+            connection = "scm:git:git://github.com/jeffreyliu8/alpaca-kmp.git"
+            developerConnection = "scm:git:ssh://git@github.com:jeffreyliu8/alpaca-kmp.git"
         }
     }
 }

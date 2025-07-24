@@ -84,7 +84,7 @@ kotlin {
 }
 
 android {
-    namespace = "org.jeffreyliu.alpacakmp"
+    namespace = "io.github.jeffreyliu8"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
