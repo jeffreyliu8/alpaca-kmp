@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -125,5 +126,38 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
     }
+}
 
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    signAllPublications()
+
+    coordinates(group.toString(), "library", version.toString())
+
+    pom {
+        name = "Alpaca Kmp"
+        description = "Kotlin for Alpaca trader api"
+        inceptionYear = "2025"
+        url = "https://github.com/jeffreyliu8/alpaca-kmp/"
+        licenses {
+            license {
+                name = "XXX"
+                url = "YYY"
+                distribution = "ZZZ"
+            }
+        }
+        developers {
+            developer {
+                id = "XXX"
+                name = "YYY"
+                url = "ZZZ"
+            }
+        }
+        scm {
+            url = "XXX"
+            connection = "YYY"
+            developerConnection = "ZZZ"
+        }
+    }
 }
