@@ -132,7 +132,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "alpacakmp", version.toString())
+    coordinates("io.github.jeffreyliu8", "alpacakmp", "0.0.1")
 
     pom {
         name = "Alpaca Kmp"
