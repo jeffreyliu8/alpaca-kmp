@@ -8,6 +8,9 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
+group = "io.github.jeffreyliu8"
+version = "0.0.1"
+
 kotlin {
     jvm("desktop")
 
@@ -132,7 +135,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates("io.github.jeffreyliu8", "alpacakmp", "0.0.1")
+    coordinates(group.toString(), "alpacakmp", version.toString())
 
     pom {
         name = "Alpaca Kmp"
