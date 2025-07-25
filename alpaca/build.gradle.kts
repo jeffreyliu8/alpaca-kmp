@@ -34,7 +34,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "com.jeffreyliu.alpaca"
+        namespace = "io.github.jeffreyliu8"
         compileSdk = 36
         minSdk = 24
 
